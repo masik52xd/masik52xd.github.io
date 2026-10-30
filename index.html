@@ -1,732 +1,544 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mwkdev.pp.ua</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Masik — вайбкодер, моддер та контент-креатор. Програми, утиліти та експериментальні розробки.">
+<title>mwkdev.pp.ua</title>
 
-    <!-- Шрифт у стилі Segoe UI / Metro Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Іконки FontAwesome для плиток -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Open Sans — найближчий аналог Segoe UI там, де його немає (Mac, Android, Linux) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <style>
-        :root {
-            /* Фірмові Metro UI кольори Windows Phone */
-            --accent: #0078d7; /* Cobalt */
-            --bg: #000000;
-            --tile-bg: #1f1f1f;
-            --text-main: #ffffff;
-            --text-dim: #767676;
-            --text-muted: #a6a6a6;
-            --metro-ease: cubic-bezier(0.1, 0.9, 0.2, 1);
-        }
+<style>
+:root{
+  --accent:#0078d7;
+  --bg:#000;
+  --tile-bg:#1f1f1f;
+  --text-dim:#767676;
+  --text-muted:#a6a6a6;
+  --ease:cubic-bezier(.1,.9,.2,1);
+  --D:clamp(640px,118vh,900px);   /* діаметр диска */
+  --hdr:0px;                      /* висота верхньої панелі на мобільних */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{
+  background:var(--bg);color:#fff;overflow-x:hidden;
+  font-family:"Segoe UI","Open Sans",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+  line-height:1.45;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            user-select: none;
-        }
+/* ─── ВЕРХНЯ ПАНЕЛЬ (PIVOT HEADER) ─── */
+.app-bar{position:fixed;top:24px;left:48px;z-index:50;pointer-events:none}
+.app-bar a,.app-bar button{pointer-events:auto}
+.metro-brand{display:block;font-size:.85rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);transition:color .5s ease;margin-bottom:2px}
+.metro-page-title{font-size:2.6rem;font-weight:300;letter-spacing:-1.5px;line-height:1.05}
+.mini-dial,.strip{display:none}
 
-        body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* ─── ДИСК (ZUNE / WP DIAL) ─── */
+.dial-container{
+  position:fixed;top:50%;left:calc(var(--D) / -2 + 12px);
+  width:var(--D);height:var(--D);transform:translateY(-50%);
+  border-radius:50%;background:#0a0a0a;border:2px solid #1a1a1a;border-right:3px solid var(--accent);
+  transition:border-right-color .5s ease;z-index:10;
+}
+.dial-container::after{ /* внутрішнє кільце */
+  content:"";position:absolute;inset:14%;border-radius:50%;border:1px solid #151515;pointer-events:none
+}
+.dial-wheel{position:absolute;inset:0;border-radius:50%;will-change:transform}
+.tick{position:absolute;inset:0;pointer-events:none}
+.tick::before{content:"";position:absolute;left:50%;top:0;width:2px;height:7px;margin-left:-1px;background:#1d1d1d}
+.tick.major::before{height:13px;background:#2c2c2c}
 
-        /* ─── ВЕРХНІЙ ТИТР METRO (PIVOT HEADER) ─── */
-        .metro-app-bar {
-            position: fixed;
-            top: 24px;
-            left: 48px;
-            z-index: 50;
-            display: flex;
-            align-items: baseline;
-            gap: 16px;
-        }
+.dial-item{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(var(--a)) translateX(calc(var(--D) / 2 - 22px))}
+.dial-in{
+  position:absolute;right:0;top:0;transform:translateY(-50%);
+  display:flex;align-items:center;white-space:nowrap;cursor:pointer;padding:10px 0;
+  background:none;text-align:left;
+}
+.dial-line{height:3px;width:45px;background:#2a2a2a;transition:all .4s var(--ease)}
+.dial-label{margin-left:18px;font-size:1.25rem;font-weight:300;color:var(--text-dim);letter-spacing:-.5px;display:flex;align-items:baseline;gap:8px;transition:color .4s var(--ease)}
+.dial-label .num{font-size:.85rem;font-weight:700;color:#444;transition:color .4s}
+.dial-item.active .dial-line{width:105px;background:var(--accent)}
+.dial-item.active .dial-label{color:#fff;font-weight:600}
+.dial-item.active .dial-label .num{color:var(--accent)}
+.dial-in:hover .dial-label{color:#ccc}
+.dial-in:hover .dial-line{background:#555}
+.dial-item.active .dial-in:hover .dial-line{background:var(--accent)}
 
-        .metro-brand {
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--accent);
-            transition: color 0.5s ease;
-        }
+/* ─── КОНТЕНТ ─── */
+.canvas{
+  position:relative;z-index:20;
+  width:min(820px,calc(100% - var(--D) / 2 - 70px - 5vw));
+  margin-left:auto;margin-right:5vw;
+}
+.panel{min-height:100vh;padding:20vh 0 8vh}
+.panel:last-child{min-height:105vh}
+.canvas-header{margin-bottom:26px}
+.section-headline{font-size:2rem;font-weight:300;letter-spacing:-.8px;line-height:1.15;margin-bottom:6px}
+.section-headline span{color:var(--accent);font-weight:600;transition:color .5s ease;margin-right:10px}
+.section-desc{color:var(--text-muted);font-size:.95rem}
 
-        .metro-page-title {
-            font-size: 2.8rem;
-            font-weight: 300;
-            letter-spacing: -1.5px;
-            color: #fff;
-            line-height: 1;
-        }
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:12px}
 
-        /* ─── ГОЛОВНА АРЕНА ─── */
-        .stage {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
+/* ─── ПЛИТКИ ─── */
+.metro-tile{
+  background:var(--tile-bg);border:2px solid transparent;padding:22px;min-height:150px;
+  display:flex;flex-direction:column;justify-content:space-between;position:relative;
+  transition:transform .2s ease,background-color .5s ease,border-color .2s ease;
+}
+a.metro-tile{cursor:pointer}
+@media (hover:hover){
+  a.metro-tile:hover{border-color:var(--accent);transform:perspective(600px) scale(.985)}
+}
+a.metro-tile:active{transform:perspective(600px) rotateX(4deg) scale(.96)}
+.metro-tile.accent-fill{background:var(--accent);color:#fff}
+.metro-tile.wide{grid-column:span 2}
+.tile-icon{font-size:2rem;color:var(--accent);margin-bottom:12px;transition:color .5s ease}
+.accent-fill .tile-icon{color:#fff}
+.tile-title{font-size:1.15rem;font-weight:600;letter-spacing:-.3px;margin-bottom:6px}
+.tile-text{color:var(--text-muted);font-size:.9rem;line-height:1.5;flex-grow:1}
+.accent-fill .tile-text{color:rgba(255,255,255,.88)}
+.tile-badge{align-self:flex-start;margin-top:14px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);transition:color .5s ease}
+.accent-fill .tile-badge{color:#fff;opacity:.85}
 
-        /* ─── ДИСК ЗЛІВА (ZUNE / WP DIAL) ─── */
-        .dial-container {
-            position: absolute;
-            left: -420px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 860px;
-            height: 860px;
-            border-radius: 50%;
-            background: #0a0a0a;
-            border: 2px solid #1a1a1a;
-            border-right: 3px solid var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: border-right-color 0.5s ease;
-            z-index: 10;
-        }
+/* Turnstile-поява плиток при скролі */
+.js .metro-tile{opacity:0}
+.js .metro-tile.in{opacity:1;animation:turnstile .55s var(--ease) backwards;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes turnstile{
+  from{opacity:0;transform:perspective(800px) translateX(46px) rotateY(-14deg)}
+  to{opacity:1;transform:none}
+}
 
-        .dial-wheel {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            transition: transform 0.6s var(--metro-ease);
-        }
+/* ─── ПІДКАЗКА ─── */
+.bottom-status{position:fixed;bottom:20px;left:48px;z-index:50;font-size:.75rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);display:flex;gap:10px}
+.bottom-status span{color:var(--accent);font-weight:700;transition:color .5s ease}
 
-        .dial-item {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform-origin: -430px center;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            padding: 8px 0;
-            text-decoration: none;
-        }
+footer{position:relative;z-index:20;text-align:center;font-size:.75rem;color:var(--text-dim);padding:0 20px 28px}
 
-        /* Горизонтальна риска Metro */
-        .dial-line {
-            height: 3px;
-            width: 45px;
-            background: #2a2a2a;
-            transition: all 0.4s var(--metro-ease);
-        }
+/* ─── МОБІЛЬНА ВЕРСІЯ: PIVOT + МІНІ-ДИСК ─── */
+@media (max-width:900px){
+  .dial-container,.bottom-status{display:none}
 
-        .dial-label {
-            margin-left: 20px;
-            font-size: 1.25rem;
-            font-weight: 300;
-            color: var(--text-dim);
-            white-space: nowrap;
-            letter-spacing: -0.5px;
-            transition: all 0.4s var(--metro-ease);
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
+  .app-bar{
+    top:0;left:0;right:0;pointer-events:auto;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) 0 0;
+    background:rgba(0,0,0,.86);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+    display:grid;grid-template-columns:1fr auto;align-items:center;
+    border-bottom:1px solid #151515;
+  }
+  .titles{padding-left:max(18px,env(safe-area-inset-left,0px))}
+  .metro-brand{font-size:.7rem;letter-spacing:1.8px}
+  .metro-page-title{font-size:2.1rem;letter-spacing:-1px}
 
-        .dial-label .num {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #444;
-            transition: color 0.4s;
-        }
+  .mini-dial{
+    display:block;position:relative;width:52px;height:52px;margin-right:max(18px,env(safe-area-inset-right,0px));
+    border-radius:50%;background:#0a0a0a;border:2px solid #222;border-right:3px solid var(--accent);transition:border-right-color .5s ease;
+  }
+  .mini-dial .wheel{position:absolute;inset:0;border-radius:50%;will-change:transform}
+  .mini-dial i{position:absolute;inset:0}
+  .mini-dial i::before{content:"";position:absolute;left:50%;top:2px;width:2px;height:6px;margin-left:-1px;background:#3a3a3a}
+  .mini-dial i.lead::before{background:var(--accent);height:9px;width:3px;margin-left:-1.5px;transition:background .5s}
+  .mini-dial::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:var(--accent);transition:background .5s}
 
-        /* Активний вибраний пункт */
-        .dial-item.active .dial-line {
-            width: 105px;
-            background: var(--accent);
-        }
+  .strip{
+    grid-column:1/-1;display:flex;gap:0;overflow-x:auto;scrollbar-width:none;
+    padding:6px max(18px,env(safe-area-inset-left,0px)) 0;margin-top:2px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .strip::-webkit-scrollbar{display:none}
+  .strip button{
+    flex:none;padding:10px 0 9px;margin-right:22px;font-size:.95rem;font-weight:400;color:var(--text-dim);
+    border-bottom:3px solid transparent;white-space:nowrap;transition:color .3s,border-color .3s;
+  }
+  .strip button[aria-current="true"]{color:#fff;font-weight:600;border-bottom-color:var(--accent)}
 
-        .dial-item.active .dial-label {
-            color: #ffffff;
-            font-weight: 600;
-            transform: translateX(16px);
-        }
-
-        .dial-item.active .dial-label .num {
-            color: var(--accent);
-        }
-
-        .dial-item:hover:not(.active) .dial-label {
-            color: #bbb;
-            transform: translateX(6px);
-        }
-
-        .dial-item:hover:not(.active) .dial-line {
-            width: 60px;
-            background: #555;
-        }
-
-        /* ─── ПРАВА СТОРОНА: ХАБ ПЛИТОК METRO (LIVE TILES) ─── */
-        .metro-canvas {
-            margin-left: auto;
-            margin-right: 5vw;
-            width: calc(100% - 500px);
-            max-width: 820px;
-            height: 72vh;
-            display: flex;
-            flex-direction: column;
-            z-index: 20;
-            perspective: 1000px;
-        }
-
-        .canvas-header {
-            margin-bottom: 24px;
-        }
-
-        .section-headline {
-            font-size: 2rem;
-            font-weight: 300;
-            letter-spacing: -0.8px;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .section-headline span {
-            color: var(--accent);
-            font-weight: 600;
-            transition: color 0.5s ease;
-        }
-
-        .section-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 400;
-        }
-
-        .tiles-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 12px;
-            scrollbar-width: thin;
-            scrollbar-color: #333 transparent;
-        }
-
-        .tiles-container::-webkit-scrollbar {
-            width: 4px;
-        }
-        .tiles-container::-webkit-scrollbar-thumb {
-            background: #333;
-        }
-
-        /* Панелі розділів */
-        .metro-panel {
-            display: none;
-        }
-
-        .metro-panel.active {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 12px;
-            animation: metroTurnstile 0.45s var(--metro-ease);
-        }
-
-        @keyframes metroTurnstile {
-            0% {
-                opacity: 0;
-                transform: translateX(40px) rotateY(-8deg);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) rotateY(0deg);
-            }
-        }
-
-        /* ─── САМІ ПЛИТКИ (TILES) ─── */
-        .metro-tile {
-            background-color: var(--tile-bg);
-            border: 2px solid transparent;
-            padding: 22px;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            text-decoration: none;
-            color: inherit;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-            transform-style: preserve-3d;
-        }
-
-        /* Metro Tilt Press Effect (Фірмове натискання плитки у 3D) */
-        .metro-tile:hover {
-            border-color: var(--accent);
-            transform: perspective(600px) scale(0.985);
-        }
-
-        .metro-tile:active {
-            transform: perspective(600px) rotateX(4deg) scale(0.96);
-        }
-
-        /* Плитка з суцільною заливкою фірмового кольору */
-        .metro-tile.accent-fill {
-            background-color: var(--accent);
-            color: #fff;
-            transition: background-color 0.5s ease;
-        }
-
-        .metro-tile.wide {
-            grid-column: span 2;
-        }
-
-        .tile-icon {
-            font-size: 2rem;
-            color: var(--accent);
-            margin-bottom: 12px;
-            transition: color 0.5s ease;
-        }
-
-        .metro-tile.accent-fill .tile-icon {
-            color: #ffffff;
-        }
-
-        .tile-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            margin-bottom: 6px;
-        }
-
-        .tile-text {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            line-height: 1.45;
-            flex-grow: 1;
-        }
-
-        .metro-tile.accent-fill .tile-text {
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        .tile-badge {
-            align-self: flex-start;
-            margin-top: 14px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            transition: color 0.5s ease;
-        }
-
-        .metro-tile.accent-fill .tile-badge {
-            color: #fff;
-            opacity: 0.8;
-        }
-
-        /* ─── ПІДКАЗКА СКРОЛУ ВНИЗУ ─── */
-        .bottom-status {
-            position: fixed;
-            bottom: 20px;
-            left: 48px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-dim);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .bottom-status span {
-            color: var(--accent);
-            font-weight: 700;
-            transition: color 0.5s ease;
-        }
-
-        /* ─── АДАПТИВНІСТЬ ДЛЯ СМАРТФОНІВ ─── */
-        @media (max-width: 900px) {
-            body {
-                overflow-y: auto;
-                height: auto;
-            }
-            .metro-app-bar {
-                position: relative;
-                top: 0;
-                left: 0;
-                padding: 24px 20px 0;
-            }
-            .stage {
-                flex-direction: column;
-                padding: 20px;
-            }
-            .dial-container {
-                position: relative;
-                left: 0;
-                top: 0;
-                transform: none;
-                width: 300px;
-                height: 300px;
-                margin: 20px auto;
-            }
-            .dial-item {
-                transform-origin: -150px center;
-            }
-            .metro-canvas {
-                width: 100%;
-                margin: 0;
-                height: auto;
-            }
-            .metro-tile.wide {
-                grid-column: span 1;
-            }
-            .bottom-status {
-                display: none;
-            }
-        }
-    </style>
+  .canvas{width:auto;margin:0;padding:calc(var(--hdr) + 14px) max(16px,env(safe-area-inset-left,0px)) 0}
+  .panel{min-height:0;padding:22px 0 34px}
+  .section-headline{display:none}
+  .section-desc{font-size:.9rem}
+  .canvas-header{margin-bottom:16px}
+  .tiles{grid-template-columns:1fr 1fr;gap:8px}
+  .metro-tile{padding:16px;min-height:132px}
+  .metro-tile.wide{grid-column:span 2}
+  .tile-icon{font-size:1.7rem}
+  .tile-title{font-size:1.05rem}
+  footer{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:520px){
+  .tiles{grid-template-columns:1fr}
+  .metro-tile.wide{grid-column:auto}
+  .metro-tile{min-height:120px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .metro-tile{opacity:1}
+}
+</style>
 </head>
 <body>
+<script>document.documentElement.classList.add('js')</script>
 
-    <!-- Верхній колонтитул у стилі Windows Phone Pivot -->
-    <header class="metro-app-bar">
-        <span class="metro-brand">MWKDEV HUB</span>
-        <h1 class="metro-page-title" id="pivot-title">про мене</h1>
-    </header>
+<!-- Верхня панель: Pivot-заголовок (+ міні-диск і меню-смужка на телефоні) -->
+<header class="app-bar" id="bar">
+  <div class="titles">
+    <span class="metro-brand">MWKDEV HUB</span>
+    <h1 class="metro-page-title" id="pivot-title">про мене</h1>
+  </div>
+  <div class="mini-dial" id="mini" aria-hidden="true"><div class="wheel" id="miniWheel"></div></div>
+  <nav class="strip" id="strip" aria-label="Розділи"></nav>
+</header>
 
-    <div class="stage">
+<!-- Диск (десктоп) -->
+<aside class="dial-container" aria-label="Навігація по розділах">
+  <div class="dial-wheel" id="wheel"></div>
+</aside>
 
-        <!-- ─── ДИСК-СЕЛЕКТОР ЛІВОРУЧ (ZUNE DIAL) ─── -->
-        <div class="dial-container">
-            <div class="dial-wheel" id="wheel">
-                <div class="dial-item active" style="transform: rotate(-36deg);" onclick="selectMetroTab(0)">
-                    <div class="dial-line"></div>
-                    <div class="dial-label"><span class="num">01</span> про мене</div>
-                </div>
+<main class="canvas" id="canvas">
 
-                <div class="dial-item" style="transform: rotate(-18deg);" onclick="selectMetroTab(1)">
-                    <div class="dial-line"></div>
-                    <div class="dial-label"><span class="num">02</span> філософія</div>
-                </div>
-
-                <div class="dial-item" style="transform: rotate(0deg);" onclick="selectMetroTab(2)">
-                    <div class="dial-line"></div>
-                    <div class="dial-label"><span class="num">03</span> софт & утиліти</div>
-                </div>
-
-                <div class="dial-item" style="transform: rotate(18deg);" onclick="selectMetroTab(3)">
-                    <div class="dial-line"></div>
-                    <div class="dial-label"><span class="num">04</span> web & gaming</div>
-                </div>
-
-                <div class="dial-item" style="transform: rotate(36deg);" onclick="selectMetroTab(4)">
-                    <div class="dial-line"></div>
-                    <div class="dial-label"><span class="num">05</span> контакти</div>
-                </div>
-            </div>
+  <!-- 01 -->
+  <section class="panel" id="s0" data-name="про мене" data-color="#0078d7">
+    <div class="canvas-header">
+      <h2 class="section-headline"><span>01</span>про мене</h2>
+      <p class="section-desc">Хто я і чим займаюсь.</p>
+    </div>
+    <div class="tiles">
+      <div class="metro-tile wide accent-fill">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-code"></i></div>
+          <h3 class="tile-title">Ласкаво просимо на mwkdev.pp.ua!</h3>
+          <p class="tile-text">Це сайт Masik'а — вайбкодера, моддера та контент-креатора. Тут ви можете знайти мої програми, авторські утиліти та інші експериментальні розробки.</p>
         </div>
-
-        <!-- ─── ПРАВА СТОРОНА: МАТРИЦЯ LIVE TILES ─── -->
-        <main class="metro-canvas">
-
-            <!-- 01: ПРО МЕНЕ -->
-            <div class="metro-panel active" id="tab-0">
-                <div class="metro-tile wide accent-fill">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-code"></i></div>
-                        <h2 class="tile-title">Ласкаво просимо на mwkdev.pp.ua!</h2>
-                        <p class="tile-text">Це сайт Masik'а — вайбкодера, моддера та контент-креатора. Тут ви можете знайти мої програми, авторські утиліти та інші експериментальні розробки.</p>
-                    </div>
-                    <span class="tile-badge">ОФІЦІЙНИЙ САЙТ // 2026</span>
-                </div>
-
-                <div class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-gauge-high"></i></div>
-                        <h3 class="tile-title">Без навантаження</h3>
-                        <p class="tile-text">Усі проекти створюються з фокусом на те, щоб споживати мінімум ресурсів заліза.</p>
-                    </div>
-                    <span class="tile-badge">ШВИДКІСТЬ</span>
-                </div>
-
-                <div class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                        <h3 class="tile-title">Вайбкодінг</h3>
-                        <p class="tile-text">Гнучке створення коду за допомогою ШІ для розв'язання реальних завдань.</p>
-                    </div>
-                    <span class="tile-badge">ШІ ПІДХІД</span>
-                </div>
-            </div>
-
-            <!-- 02: ФІЛОСОФІЯ РОЗРОБКИ -->
-            <div class="metro-panel" id="tab-1">
-                <div class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-microchip"></i></div>
-                        <h3 class="tile-title">Оптимізація та Швидкість</h3>
-                        <p class="tile-text">Створюю програми, які не перевантажують залізо. Мінімум процесів та фонової активності для стабільної роботи навіть на застарілих девайсах. Окрім IF ELSE :)</p>
-                    </div>
-                    <span class="tile-badge">PERFORMANCE</span>
-                </div>
-
-                <div class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-lock-open"></i></div>
-                        <h3 class="tile-title">Чистий Open-Source</h3>
-                        <p class="tile-text">Жодної прихованої телеметрії, реклами чи збору персональних даних у коді. Всі мої репозиторії під ліцензією MIT, навіть якщо там це не написано.</p>
-                    </div>
-                    <span class="tile-badge">MIT LICENSE</span>
-                </div>
-
-                <div class="metro-tile wide accent-fill">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-brain"></i></div>
-                        <h3 class="tile-title">Вайбкодінг нового часу</h3>
-                        <p class="tile-text">Пишу код через різні ШІ, але роблю все те, що могло б мені і іншим людям реально знадобитися в житті.</p>
-                    </div>
-                    <span class="tile-badge">ФІЛОСОФІЯ // MASIK</span>
-                </div>
-            </div>
-
-            <!-- 03: УТИЛІТИ & СОФТ -->
-            <div class="metro-panel" id="tab-2">
-                <!-- EzTyper -->
-                <a href="https://github.com/masik52xd/EzTyper/tree/main" target="_blank" rel="noopener" class="metro-tile wide">
-                    <div>
-                        <div class="tile-icon"><i class="fa-regular fa-file-lines"></i></div>
-                        <h3 class="tile-title">EzTyper</h3>
-                        <p class="tile-text">Текстовий редактор сценаріїв, у якому фішок значно більше, ніж у стандартному notepad.exe, але при цьому він споживає навіть менше ресурсів заліза.</p>
-                    </div>
-                    <span class="tile-badge">ВІДКРИТИ GITHUB <i class="fa-solid fa-arrow-right"></i></span>
-                </a>
-
-                <!-- SOMAF1X -->
-                <a href="https://masik52xd.github.io/s0maf1x-launcher-site/" target="_blank" rel="noopener" class="metro-tile wide accent-fill">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-gamepad"></i></div>
-                        <h3 class="tile-title">SOMAF1X</h3>
-                        <p class="tile-text">Найлегший Minecraft Launcher з унікальним дизайном та нативною підтримкою Ely.by спільноти.</p>
-                    </div>
-                    <span class="tile-badge">ПЕРЕЙТИ НА САЙТ <i class="fa-solid fa-arrow-right"></i></span>
-                </a>
-            </div>
-
-            <!-- 04: GAMING & WEB -->
-            <div class="metro-panel" id="tab-3">
-                <!-- Broadcast Suite -->
-                <a href="https://masik52xd.github.io/Broadcast-suite/" target="_blank" rel="noopener" class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-tv"></i></div>
-                        <h3 class="tile-title">Broadcast Suite</h3>
-                        <p class="tile-text">Професійна оверлей-платформа для трансляцій кіберспортивних матчів незалежними організаторами.</p>
-                    </div>
-                    <span class="tile-badge">ESPORTS OVERLAY</span>
-                </a>
-                
-                <!-- upgrader -->
-                <a href="http://mwkdev.pp.ua/upgrader/" target="_blank" rel="noopener" class="metro-tile accent-fill">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-sort-up"></i></div>
-                        <h3 class="tile-title">Upgrader</h3>
-                        <p class="tile-text">Апгрейди віртуальні скіни з віртуальним балансом! Додає азарту.</p>
-                    </div>
-                    <span class="tile-badge">SIMULATOR</span>
-                </a>
-                
-                <!-- MakeIt Hub -->
-                <a href="https://masik52xd.github.io/makeithavoc/" target="_blank" rel="noopener" class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-rocket"></i></div>
-                        <h3 class="tile-title">MakeIt Hub</h3>
-                        <p class="tile-text">Платформа для навчання нових гравців та входу у світ Havoc з інтегрованою чергою матчів.</p>
-                    </div>
-                    <span class="tile-badge">COMMUNITY HUB</span>
-                </a>
-
-                <!-- Havoc.gg -->
-                <a href="https://masik52xd.github.io/Havoc.gg/" target="_blank" rel="noopener" class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-chart-line"></i></div>
-                        <h3 class="tile-title">Havoc.gg</h3>
-                        <p class="tile-text">Глобальний портал для збору статистики, матчів та публікації новин гри Havoc (в розробці).</p>
-                    </div>
-                    <span class="tile-badge">В РОЗРОБЦІ</span>
-                </a>
-
-                <!-- Chess Upgrader -->
-                <a href="https://masik52xd.github.io/Chess" target="_blank" rel="noopener" class="metro-tile accent-fill">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-chess"></i></div>
-                        <h3 class="tile-title">Chess Upgrader</h3>
-                        <p class="tile-text">Шахи з новою фішкою — Апгрейд фігур! Працює через P2P, має MIT ліцензію.</p>
-                    </div>
-                    <span class="tile-badge">P2P GAME</span>
-                </a>
-            </div>
-                
-
-            <!-- 05: ЗВ'ЯЗОК ТА КОНТАКТИ -->
-            <div class="metro-panel" id="tab-4">
-                <a href="https://github.com/masik52xd" target="_blank" rel="noopener" class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-brands fa-github"></i></div>
-                        <h3 class="tile-title">GitHub</h3>
-                        <p class="tile-text">Відкрити GitHub репозиторії @masik52xd</p>
-                    </div>
-                    <span class="tile-badge">SOURCE CODE</span>
-                </a>
-
-                <a href="https://www.youtube.com/@Mas1k52" target="_blank" rel="noopener" class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-brands fa-youtube"></i></div>
-                        <h3 class="tile-title">YouTube</h3>
-                        <p class="tile-text">Офіційний канал @Mas1k52</p>
-                    </div>
-                    <span class="tile-badge">ВІДЕО</span>
-                </a>
-
-                <a href="https://discord.gg/DNbV8uCynp" target="_blank" rel="noopener" class="metro-tile accent-fill">
-                    <div>
-                        <div class="tile-icon"><i class="fa-brands fa-discord"></i></div>
-                        <h3 class="tile-title">Discord Сервер</h3>
-                        <p class="tile-text">Спільнота true. Приєднуйтесь до обговорення проектів.</p>
-                    </div>
-                    <span class="tile-badge">TRUE. COMMUNITY</span>
-                </a>
-
-                <a href="mailto:buzznachile@gmail.com" class="metro-tile">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-envelope"></i></div>
-                        <h3 class="tile-title">Email</h3>
-                        <p class="tile-text">buzznachile@gmail.com</p>
-                    </div>
-                    <span class="tile-badge">НАПИСАТИ ЛИСТ</span>
-                </a>
-
-                <a href="https://masik52xd.github.io/RandomCountry/" target="_blank" rel="noopener" class="metro-tile wide">
-                    <div>
-                        <div class="tile-icon"><i class="fa-solid fa-box-archive"></i></div>
-                        <h3 class="tile-title">Random Countries</h3>
-                        <p class="tile-text">Архівний експериментальний проект генерації країн.</p>
-                    </div>
-                    <span class="tile-badge">АРХІВ</span>
-                </a>
-            </div>
-
-        </main>
-
+        <span class="tile-badge">ОФІЦІЙНИЙ САЙТ // 2026</span>
+      </div>
+      <div class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-gauge-high"></i></div>
+          <h3 class="tile-title">Без навантаження</h3>
+          <p class="tile-text">Усі проекти створюються з фокусом на те, щоб споживати мінімум ресурсів заліза.</p>
+        </div>
+        <span class="tile-badge">ШВИДКІСТЬ</span>
+      </div>
+      <div class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h3 class="tile-title">Вайбкодінг</h3>
+          <p class="tile-text">Гнучке створення коду за допомогою ШІ для розв'язання реальних завдань.</p>
+        </div>
+        <span class="tile-badge">ШІ ПІДХІД</span>
+      </div>
     </div>
+  </section>
 
-    <!-- Підказка внизу сторінки -->
-    <div class="bottom-status">
-        <span>SCROLL / DIAL</span> ДЛЯ ПЕРЕМИКАННЯ РОЗДІЛІВ METRO
+  <!-- 02 -->
+  <section class="panel" id="s1" data-name="філософія" data-color="#107c10">
+    <div class="canvas-header">
+      <h2 class="section-headline"><span>02</span>філософія</h2>
+      <p class="section-desc">Принципи, на яких тримається кожен проект.</p>
     </div>
+    <div class="tiles">
+      <div class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-microchip"></i></div>
+          <h3 class="tile-title">Оптимізація та Швидкість</h3>
+          <p class="tile-text">Створюю програми, які не перевантажують залізо. Мінімум процесів та фонової активності для стабільної роботи навіть на застарілих девайсах. Окрім IF ELSE :)</p>
+        </div>
+        <span class="tile-badge">PERFORMANCE</span>
+      </div>
+      <div class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-lock-open"></i></div>
+          <h3 class="tile-title">Чистий Open-Source</h3>
+          <p class="tile-text">Жодної прихованої телеметрії, реклами чи збору персональних даних у коді. Всі мої репозиторії під ліцензією MIT, навіть якщо там це не написано.</p>
+        </div>
+        <span class="tile-badge">MIT LICENSE</span>
+      </div>
+      <div class="metro-tile wide accent-fill">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-brain"></i></div>
+          <h3 class="tile-title">Вайбкодінг нового часу</h3>
+          <p class="tile-text">Пишу код через різні ШІ, але роблю все те, що могло б мені і іншим людям реально знадобитися в житті.</p>
+        </div>
+        <span class="tile-badge">ФІЛОСОФІЯ // MASIK</span>
+      </div>
+    </div>
+  </section>
 
-    <!-- ─── ЛОГІКА METRO UI ТА ПОВОРОТУ ДИСКА ─── -->
-    <script>
-        // Кольори Windows Phone Metro: Cobalt, Emerald, Mango, Crimson, Magenta
-        const metroColors = [
-            "#0078d7", // 01: Cobalt Blue
-            "#107c10", // 02: Xbox Green
-            "#d83b01", // 03: Mango Orange
-            "#e81123", // 04: Crimson Red
-            "#d80073"  // 05: Fuchsia / Magenta
-        ];
+  <!-- 03 -->
+  <section class="panel" id="s2" data-name="софт & утиліти" data-color="#d83b01">
+    <div class="canvas-header">
+      <h2 class="section-headline"><span>03</span>софт &amp; утиліти</h2>
+      <p class="section-desc">Легкі інструменти для щоденних задач.</p>
+    </div>
+    <div class="tiles">
+      <a href="https://github.com/masik52xd/EzTyper/tree/main" target="_blank" rel="noopener" class="metro-tile wide">
+        <div>
+          <div class="tile-icon"><i class="fa-regular fa-file-lines"></i></div>
+          <h3 class="tile-title">EzTyper</h3>
+          <p class="tile-text">Текстовий редактор сценаріїв, у якому фішок значно більше, ніж у стандартному notepad.exe, але при цьому він споживає навіть менше ресурсів заліза.</p>
+        </div>
+        <span class="tile-badge">ВІДКРИТИ GITHUB <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a href="https://masik52xd.github.io/s0maf1x-launcher-site/" target="_blank" rel="noopener" class="metro-tile wide accent-fill">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-gamepad"></i></div>
+          <h3 class="tile-title">SOMAF1X</h3>
+          <p class="tile-text">Найлегший Minecraft Launcher з унікальним дизайном та нативною підтримкою Ely.by спільноти.</p>
+        </div>
+        <span class="tile-badge">ПЕРЕЙТИ НА САЙТ <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </section>
 
-        const sectionNames = [
-            "про мене",
-            "філософія",
-            "софт & утиліти",
-            "web & gaming",
-            "контакти"
-        ];
+  <!-- 04 -->
+  <section class="panel" id="s3" data-name="web & gaming" data-color="#e81123">
+    <div class="canvas-header">
+      <h2 class="section-headline"><span>04</span>web &amp; gaming</h2>
+      <p class="section-desc">Платформи, ігри та сервіси для спільнот.</p>
+    </div>
+    <div class="tiles">
+      <a href="https://masik52xd.github.io/Broadcast-suite/" target="_blank" rel="noopener" class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-tv"></i></div>
+          <h3 class="tile-title">Broadcast Suite</h3>
+          <p class="tile-text">Професійна оверлей-платформа для трансляцій кіберспортивних матчів незалежними організаторами.</p>
+        </div>
+        <span class="tile-badge">ESPORTS OVERLAY</span>
+      </a>
+      <a href="http://mwkdev.pp.ua/upgrader/" target="_blank" rel="noopener" class="metro-tile accent-fill">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-sort-up"></i></div>
+          <h3 class="tile-title">Upgrader</h3>
+          <p class="tile-text">Апгрейди віртуальні скіни з віртуальним балансом! Додає азарту.</p>
+        </div>
+        <span class="tile-badge">SIMULATOR</span>
+      </a>
+      <a href="https://masik52xd.github.io/makeithavoc/" target="_blank" rel="noopener" class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-rocket"></i></div>
+          <h3 class="tile-title">MakeIt Hub</h3>
+          <p class="tile-text">Платформа для навчання нових гравців та входу у світ Havoc з інтегрованою чергою матчів.</p>
+        </div>
+        <span class="tile-badge">COMMUNITY HUB</span>
+      </a>
+      <a href="https://masik52xd.github.io/Havoc.gg/" target="_blank" rel="noopener" class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3 class="tile-title">Havoc.gg</h3>
+          <p class="tile-text">Глобальний портал для збору статистики, матчів та публікації новин гри Havoc (в розробці).</p>
+        </div>
+        <span class="tile-badge">В РОЗРОБЦІ</span>
+      </a>
+      <a href="https://masik52xd.github.io/Chess" target="_blank" rel="noopener" class="metro-tile wide accent-fill">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-chess"></i></div>
+          <h3 class="tile-title">Chess Upgrader</h3>
+          <p class="tile-text">Шахи з новою фішкою — Апгрейд фігур! Працює через P2P, має MIT ліцензію.</p>
+        </div>
+        <span class="tile-badge">P2P GAME</span>
+      </a>
+    </div>
+  </section>
 
-        // Кути повороту колеса для центрування активного пункту
-        const dialAngles = [36, 18, 0, -18, -36];
-        let currentTab = 0;
-        let isThrottled = false;
+  <!-- 05 -->
+  <section class="panel" id="s4" data-name="контакти" data-color="#d80073">
+    <div class="canvas-header">
+      <h2 class="section-headline"><span>05</span>контакти</h2>
+      <p class="section-desc">Код, відео та спільнота — в одному місці.</p>
+    </div>
+    <div class="tiles">
+      <a href="https://github.com/masik52xd" target="_blank" rel="noopener" class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-brands fa-github"></i></div>
+          <h3 class="tile-title">GitHub</h3>
+          <p class="tile-text">Відкрити GitHub репозиторії @masik52xd</p>
+        </div>
+        <span class="tile-badge">SOURCE CODE</span>
+      </a>
+      <a href="https://www.youtube.com/@Mas1k52" target="_blank" rel="noopener" class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-brands fa-youtube"></i></div>
+          <h3 class="tile-title">YouTube</h3>
+          <p class="tile-text">Офіційний канал @Mas1k52</p>
+        </div>
+        <span class="tile-badge">ВІДЕО</span>
+      </a>
+      <a href="https://discord.gg/DNbV8uCynp" target="_blank" rel="noopener" class="metro-tile accent-fill">
+        <div>
+          <div class="tile-icon"><i class="fa-brands fa-discord"></i></div>
+          <h3 class="tile-title">Discord Сервер</h3>
+          <p class="tile-text">Спільнота true. Приєднуйтесь до обговорення проектів.</p>
+        </div>
+        <span class="tile-badge">TRUE. COMMUNITY</span>
+      </a>
+      <a href="mailto:buzznachile@gmail.com" class="metro-tile">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-envelope"></i></div>
+          <h3 class="tile-title">Email</h3>
+          <p class="tile-text">buzznachile@gmail.com</p>
+        </div>
+        <span class="tile-badge">НАПИСАТИ ЛИСТ</span>
+      </a>
+      <a href="https://masik52xd.github.io/RandomCountry/" target="_blank" rel="noopener" class="metro-tile wide">
+        <div>
+          <div class="tile-icon"><i class="fa-solid fa-box-archive"></i></div>
+          <h3 class="tile-title">Random Countries</h3>
+          <p class="tile-text">Архівний експериментальний проект генерації країн.</p>
+        </div>
+        <span class="tile-badge">АРХІВ</span>
+      </a>
+    </div>
+  </section>
 
-        const wheel = document.getElementById('wheel');
-        const items = document.querySelectorAll('.dial-item');
-        const panels = document.querySelectorAll('.metro-panel');
-        const pivotTitle = document.getElementById('pivot-title');
+</main>
 
-        function selectMetroTab(index) {
-            if (index < 0 || index >= metroColors.length) return;
-            currentTab = index;
+<footer>© 2026 Masik · mwkdev.pp.ua</footer>
 
-            // 1. Поворот колеса Zune
-            wheel.style.transform = `rotate(${dialAngles[currentTab]}deg)`;
+<div class="bottom-status"><span>SCROLL</span> КРУТІТЬ КОЛЕСО — ДИСК ПЕРЕМИКАЄ РОЗДІЛИ</div>
 
-            // 2. Зміна системного кольору теми Metro
-            const activeColor = metroColors[currentTab];
-            document.documentElement.style.setProperty('--accent', activeColor);
+<script>
+(() => {
+  const secs   = [...document.querySelectorAll('.panel')];
+  const N      = secs.length;
+  const colors = secs.map(s => s.dataset.color);
+  const names  = secs.map(s => s.dataset.name);
 
-            // 3. Зміна заголовка у стилі Windows Phone Pivot
-            pivotTitle.textContent = sectionNames[currentTab];
+  const wheel = document.getElementById('wheel');
+  const miniWheel = document.getElementById('miniWheel');
+  const strip = document.getElementById('strip');
+  const bar = document.getElementById('bar');
+  const title = document.getElementById('pivot-title');
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const STEP = 18;                       // кут між пунктами диска
 
-            // 4. Оновлення списку категорій на дузі
-            items.forEach((item, i) => {
-                item.classList.toggle('active', i === currentTab);
-            });
+  /* ── Будуємо диск ── */
+  for (let k = 0; k < 60; k++) {         // риски по колу
+    const t = document.createElement('div');
+    t.className = 'tick' + (k % 3 === 0 ? ' major' : '');
+    t.style.transform = `rotate(${k * 6}deg)`;
+    wheel.appendChild(t);
+  }
+  const items = names.map((name, i) => {
+    const el = document.createElement('div');
+    el.className = 'dial-item';
+    el.style.setProperty('--a', `${i * STEP - 36}deg`);
+    el.innerHTML = `<button class="dial-in" type="button" aria-label="${name}"><span class="dial-line"></span><span class="dial-label"><span class="num">0${i + 1}</span>${name.replace('&','&amp;')}</span></button>`;
+    el.querySelector('button').addEventListener('click', () => goTo(i));
+    wheel.appendChild(el);
+    return el;
+  });
 
-            // 5. Перемикання плиток з анімацією Turnstile
-            panels.forEach((panel, i) => {
-                panel.classList.toggle('active', i === currentTab);
-            });
-        }
+  /* ── Міні-диск і pivot-меню (телефон) ── */
+  for (let k = 0; k < 12; k++) {
+    const t = document.createElement('i');
+    if (k === 0) t.className = 'lead';
+    t.style.transform = `rotate(${k * 30}deg)`;
+    miniWheel.appendChild(t);
+  }
+  const tabs = names.map((name, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = name;
+    b.addEventListener('click', () => goTo(i));
+    strip.appendChild(b);
+    return b;
+  });
 
-        // Керування коліщатком миші
-        window.addEventListener('wheel', (e) => {
-            const activePanel = document.querySelector('.metro-panel.active');
-            
-            // Якщо всередині списку плиток є вертикальний скрол — даємо доскролити його
-            const canScrollInside = activePanel && (
-                (e.deltaY > 0 && activePanel.scrollTop + activePanel.clientHeight < activePanel.scrollHeight - 10) ||
-                (e.deltaY < 0 && activePanel.scrollTop > 10)
-            );
+  /* ── Поява плиток ── */
+  secs.forEach(s => s.querySelectorAll('.metro-tile').forEach((t, i) => t.style.setProperty('--i', i)));
+  const tiles = document.querySelectorAll('.metro-tile');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { threshold: .1, rootMargin: '0px 0px -5% 0px' });
+    tiles.forEach(t => io.observe(t));
+  } else tiles.forEach(t => t.classList.add('in'));
 
-            if (canScrollInside) return;
-            if (isThrottled) return;
+  /* ── Прив'язка обертання до скролу ── */
+  let anchors = [], target = 0, cur = 0, active = -1, raf = 0;
+  const mobile = () => innerWidth <= 900;
 
-            if (e.deltaY > 20) {
-                if (currentTab < metroColors.length - 1) {
-                    selectMetroTab(currentTab + 1);
-                    throttle();
-                }
-            } else if (e.deltaY < -20) {
-                if (currentTab > 0) {
-                    selectMetroTab(currentTab - 1);
-                    throttle();
-                }
-            }
-        }, { passive: true });
+  function measure() {
+    const hdr = mobile() ? bar.offsetHeight : 0;
+    document.documentElement.style.setProperty('--hdr', hdr + 'px');
+    const off = mobile() ? hdr + 20 : innerHeight * .4;
+    const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    anchors = secs.map((s, i) => {
+      const a = s.getBoundingClientRect().top + scrollY - off;
+      return Math.min(a, max - (N - 1 - i) * 24);   // останній розділ завжди досяжний
+    });
+    for (let i = 1; i < N; i++) anchors[i] = Math.max(anchors[i], anchors[i - 1] + 1);
+    onScroll();
+  }
 
-        // Стрілки на клавіатурі
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                if (currentTab < metroColors.length - 1) selectMetroTab(currentTab + 1);
-            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                if (currentTab > 0) selectMetroTab(currentTab - 1);
-            }
-        });
+  function progress() {
+    const y = scrollY;
+    if (y <= anchors[0]) return 0;
+    for (let i = 0; i < N - 1; i++) {
+      if (y < anchors[i + 1]) return i + (y - anchors[i]) / (anchors[i + 1] - anchors[i]);
+    }
+    return N - 1;
+  }
 
-        function throttle() {
-            isThrottled = true;
-            setTimeout(() => { isThrottled = false; }, 380);
-        }
+  function render() {
+    raf = 0;
+    cur = reduce ? target : cur + (target - cur) * .16;
+    if (Math.abs(target - cur) < .002) cur = target;
 
-        // Початкова ініціалізація
-        selectMetroTab(0);
-    </script>
+    wheel.style.transform = `rotate(${36 - STEP * cur}deg)`;
+    miniWheel.style.transform = `rotate(${-cur * 72}deg)`;
+
+    const idx = Math.max(0, Math.min(N - 1, Math.round(cur)));
+    if (idx !== active) setActive(idx);
+
+    if (cur !== target) raf = requestAnimationFrame(render);
+  }
+
+  function setActive(i) {
+    active = i;
+    document.documentElement.style.setProperty('--accent', colors[i]);
+    if (themeMeta) themeMeta.content = '#000000';
+    title.textContent = names[i];
+    items.forEach((el, k) => el.classList.toggle('active', k === i));
+    tabs.forEach((b, k) => b.setAttribute('aria-current', k === i));
+    if (mobile()) {
+      const b = tabs[i];
+      strip.scrollTo({ left: Math.max(0, b.offsetLeft - 18), behavior: reduce ? 'auto' : 'smooth' });
+    }
+  }
+
+  function onScroll() {
+    target = progress();
+    if (!raf) raf = requestAnimationFrame(render);
+  }
+
+  function goTo(i) {
+    scrollTo({ top: anchors[i] + 2, behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', measure);
+  addEventListener('load', measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input,textarea')) return;
+    if (e.key === 'ArrowRight') goTo(Math.min(N - 1, active + 1));
+    else if (e.key === 'ArrowLeft') goTo(Math.max(0, active - 1));
+  });
+
+  measure();
+  cur = target;      // стартуємо без «докручування»
+  render();
+})();
+</script>
 </body>
 </html>
