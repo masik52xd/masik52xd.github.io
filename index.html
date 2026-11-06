@@ -6,160 +6,140 @@
 <meta name="description" content="Masik — вайбкодер, моддер та контент-креатор. Програми, утиліти та експериментальні розробки.">
 <title>mwkdev.pp.ua</title>
 <style>
-:root{--g1:#14a514;--g2:#0e8f0e;--gap:4px;--ac:#2aa6d6;color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--cy:#00c3e3;--tx:#2d2d2d;--ts:clamp(118px,15vw,200px);color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
-body{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;color:#fff;overflow:hidden;background:radial-gradient(ellipse 120% 90% at 50% 15%,#c4c4c4 0%,#9a9a9a 38%,#6c6c6c 72%,#4a4a4a 100%);display:flex;flex-direction:column}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 30% at 20% 105%,rgba(255,255,255,.28),transparent 70%),radial-gradient(ellipse 60% 25% at 85% 100%,rgba(255,255,255,.18),transparent 70%)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:clamp(12px,3vh,30px) clamp(16px,5vw,80px) 0;position:relative;z-index:2}
-nav{display:flex;gap:clamp(16px,2.8vw,44px);overflow-x:auto;scrollbar-width:none}
-nav button{all:unset;cursor:pointer;font-size:clamp(18px,2.3vw,32px);font-weight:300;color:rgba(255,255,255,.55);text-shadow:0 1px 3px rgba(0,0,0,.45);white-space:nowrap;transition:color .25s}
-nav button:hover{color:rgba(255,255,255,.9)}
-nav button[aria-selected=true]{color:#fff}
-.user{all:unset;cursor:pointer;color:#fff;display:flex;align-items:center;gap:10px;text-shadow:0 1px 3px rgba(0,0,0,.5);padding:4px 6px;transition:transform .18s}
-.user:hover,.user:focus-visible{transform:scale(1.06)}
-.who{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
-.who b{font-weight:600;font-size:16px}
-.who small{display:flex;align-items:center;gap:5px;font-size:13px;opacity:.9}
-.who i{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#fff;color:#4a8a1a;font-style:normal;font-weight:800;font-size:10px;text-shadow:none}
-.av{width:42px;height:42px;border-radius:3px;background:linear-gradient(135deg,#1aa31a,#0b6b0b);display:grid;place-items:center;font-size:20px;font-weight:600;box-shadow:0 0 0 2px rgba(255,255,255,.7)}
-:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.stage{flex:1;min-height:0;display:flex;justify-content:center;justify-content:safe center;align-items:center;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:28px 0;position:relative;z-index:1}
-.stage::-webkit-scrollbar{display:none}
-.row{display:flex;gap:var(--gap);margin:auto;align-self:center;height:min(68vh,440px);padding:0 clamp(16px,5vw,80px)}
-.col{display:flex;flex-direction:column;gap:var(--gap);flex:0 0 clamp(170px,19vw,290px)}
-.col.f{flex-basis:clamp(340px,50vw,760px)}
-.tile{all:unset;box-sizing:border-box;flex:1;position:relative;cursor:pointer;background:linear-gradient(var(--g1),var(--g2));display:flex;flex-direction:column;justify-content:flex-end;padding:0 12px 12px 16px;font-size:clamp(15px,1.4vw,21px);text-shadow:0 1px 2px rgba(0,0,0,.35);overflow:hidden;min-height:84px;color:#fff;transition:transform .18s ease-out,box-shadow .18s,filter .18s}
-.tile .sub{font-size:11px;letter-spacing:1px;opacity:.75;margin-top:2px;text-transform:uppercase}
-.tile svg.i{position:absolute;left:50%;top:38%;width:clamp(34px,4.2vw,60px);transform:translate(-50%,-50%);fill:none;stroke:#e9f7e9;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-a.tile::after{content:"↗";position:absolute;top:8px;right:12px;font-size:16px;opacity:.7}
-.tile:hover,.tile:focus-visible{z-index:5;transform:scale(1.08);box-shadow:0 0 0 3px #fff,0 12px 32px rgba(0,0,0,.55);filter:brightness(1.1);outline:none}
-.tile:active{transform:scale(1.02)}
-.tile.feat{padding:0;background:radial-gradient(ellipse at 50% 28%,#2c2c2e,#0a0a0b 78%)}
-.tile.feat:hover,.tile.feat:focus-visible{transform:scale(1.025)}
-.tile.feat svg.i{top:36%;width:clamp(60px,9vw,120px);stroke:#fff;stroke-width:1.8;filter:drop-shadow(0 0 16px var(--ac))}
-.tile.feat .bar{margin-top:auto;padding:12px 18px 14px;background:rgba(0,0,0,.7);border-top:3px solid var(--ac);display:flex;flex-direction:column;gap:4px}
-.tile.feat .bar b{font-weight:400;font-size:clamp(17px,1.8vw,26px)}
-.tile.feat .desc{font-size:clamp(12px,1.1vw,15px);line-height:1.45;opacity:.85}
-.tile.feat .sub{margin:0;color:var(--ac);opacity:1}
-.tile.feat::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,transparent 35%,rgba(255,255,255,.14) 50%,transparent 65%);transform:translateX(-130%);animation:shine 7s ease-in-out infinite}
-@keyframes shine{55%,100%{transform:translateX(130%)}}
-.in .tile{animation:tin .5s cubic-bezier(.2,.8,.2,1) backwards}
-@keyframes tin{from{opacity:0;translate:70px 0}}
-.in.back .tile{animation-name:tinb}
-@keyframes tinb{from{opacity:0;translate:-70px 0}}
-.ach{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;align-items:center;gap:14px;padding:10px 26px 10px 12px;border-radius:40px;background:linear-gradient(#3a3a3a,#161616);box-shadow:0 0 0 2px rgba(255,255,255,.5),0 10px 30px rgba(0,0,0,.5);transform:translate(-50%,200%);transition:transform .5s cubic-bezier(.2,.9,.3,1.2);pointer-events:none;max-width:92vw}
-.ach.on{transform:translate(-50%,0)}
-.ach>i{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7fe04a,#2a8a12);font-style:normal;font-weight:800;font-size:22px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
-.ach small{display:block;font-size:12px;opacity:.75}
-.ach b{font-weight:600;font-size:16px}
-@keyframes hue{to{filter:hue-rotate(360deg)}}
-body.rb .stage{animation:hue 1.4s linear 3}
-.ov{position:fixed;inset:0;z-index:20;background:rgba(20,22,22,.6);backdrop-filter:blur(4px);display:none;place-items:center;padding:20px}
+body{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;color:var(--tx);overflow:hidden;background:radial-gradient(ellipse 100% 70% at 50% 0,#fafafa 0%,#ebebeb 55%,#dcdcdc 100%);display:flex;flex-direction:column;user-select:none}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:clamp(14px,3.5vh,34px) clamp(18px,4vw,64px) 0}
+.me{all:unset;cursor:pointer;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#1aa31a,#0b6b0b);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:600;box-shadow:0 0 0 3px #fff,0 0 0 4px #cfcfcf;transition:transform .15s}
+.me:hover,.me:focus-visible{transform:scale(1.08);box-shadow:0 0 0 3px #fff,0 0 0 6px var(--cy)}
+.st{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;letter-spacing:.3px}
+.st svg{width:22px;height:22px;fill:none;stroke:var(--tx);stroke-width:2;stroke-linecap:round}
+.sd{all:unset;cursor:pointer;display:grid;place-items:center;margin-right:4px}.sd .x{display:none}.sd.off .w{display:none}.sd.off .x{display:block}.sd:focus-visible svg{stroke:var(--cy)}
+.bat{width:30px;height:14px;border:2px solid var(--tx);border-radius:3px;padding:1px;position:relative}
+.bat::after{content:"";position:absolute;right:-5px;top:3px;width:3px;height:6px;background:var(--tx);border-radius:0 2px 2px 0}
+.bat i{display:block;height:100%;width:100%;background:var(--tx);transition:width .4s}
+:focus-visible{outline:none}
+main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,4.5vh,46px);padding-bottom:5vh}
+.shelf{overflow:hidden;padding:64px 0 22px;margin:-30px 0 -10px}
+.track{display:flex;gap:calc(var(--ts)*.09);width:max-content;position:relative;transition:transform .35s cubic-bezier(.25,.9,.3,1)}
+.tile{all:unset;box-sizing:border-box;cursor:pointer;position:relative;flex:none;width:var(--ts);height:var(--ts);transition:transform .2s}
+.art{position:absolute;inset:0;border-radius:3px;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:0 12px 11px;font-size:clamp(14px,1.3vw,18px);box-shadow:0 2px 6px rgba(0,0,0,.3);background:linear-gradient(145deg,var(--a),var(--b));text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.art::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.28),transparent 45%)}
+.art svg{position:absolute;left:50%;top:40%;width:42%;transform:translate(-50%,-50%);fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.nm{position:absolute;left:0;bottom:calc(100% + 16px);font-size:17px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .2s}
+.tile.sel{transform:scale(1.07);z-index:3}
+.tile.sel .nm{opacity:1}
+.tile.sel::after,.dk.on::after{content:"";position:absolute;inset:-6px;border:4px solid var(--cy);box-shadow:0 0 0 2px #fff inset,0 0 0 2px #fff,0 0 20px 6px rgba(0,195,227,.5);animation:glow 1.3s ease-in-out infinite;pointer-events:none}
+.dk.on::after{border-radius:50%;inset:-7px}
+.zb .tile.sel::after{display:none}.zb .tile.sel{transform:none}.zb .tile.sel .nm{opacity:0}
+@keyframes glow{50%{border-color:#7df0ff;box-shadow:0 0 0 2px #fff inset,0 0 0 2px #fff,0 0 8px 2px rgba(0,195,227,.3)}}
+@keyframes rain{to{filter:hue-rotate(360deg)}}
+body.rb .tile.sel::after,body.rb .dk.on::after{animation:glow 1.3s ease-in-out infinite,rain .9s linear infinite}
+.cap{text-align:center;min-height:3.6em;padding:0 24px;font-size:15px;line-height:1.5}
+.cap b{display:block;font-size:12px;letter-spacing:1.5px;color:#0a9bb5;font-weight:700;margin-bottom:2px}
+.cap span{display:block;max-width:62ch;margin:0 auto;color:#555}
+.zb .cap{visibility:hidden}
+.dock{display:flex;justify-content:center;gap:clamp(12px,2vw,26px);flex-wrap:wrap;padding:0 16px 30px}
+.dk{all:unset;cursor:pointer;position:relative;width:clamp(50px,4.6vw,64px);height:clamp(50px,4.6vw,64px);border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25),inset 0 0 0 1px #e2e2e2;display:grid;place-items:center;transition:transform .2s}
+.dk svg{width:48%;fill:none;stroke:#5a5a5a;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dk .lb{position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);font-size:13px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .2s}
+.dk.on{transform:scale(1.1)}.dk.on .lb{opacity:1}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(235,235,235,.75);backdrop-filter:blur(6px);display:none;place-items:center;padding:20px}
 .ov.on{display:grid;animation:fade .2s}
 @keyframes fade{from{opacity:0}}
-.dlg{width:min(560px,100%);background:linear-gradient(#f3f3f3,#d4d4d4);color:#222;border-top:6px solid var(--g1);padding:26px 28px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:pop .3s cubic-bezier(.2,.8,.2,1)}
+.dlg{width:min(540px,100%);background:#fff;border-radius:6px;padding:28px 30px;box-shadow:0 10px 40px rgba(0,0,0,.3);animation:pop .28s cubic-bezier(.2,.8,.2,1)}
 @keyframes pop{from{transform:scale(.92);opacity:0}}
-.dlg h2{font-weight:300;font-size:32px;margin-bottom:6px}
-.dlg .bd{font-size:12px;letter-spacing:1.5px;color:#0e7a0e;font-weight:700;margin-bottom:12px}
-.dlg p{line-height:1.55;margin-bottom:22px}
-.dlg button{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 24px;background:#8a8a8a;color:#fff;font-size:16px}
-.dlg a{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 24px;background:#0e8f0e;color:#fff;font-size:16px;margin-right:8px}
+.dlg h2{font-weight:600;font-size:26px;margin-bottom:4px}
+.dlg .bd{font-size:12px;letter-spacing:1.5px;color:#0a9bb5;font-weight:700;margin-bottom:14px}
+.dlg p{line-height:1.6;margin-bottom:24px;color:#444}
+.dlg a,.dlg button{all:unset;box-sizing:border-box;cursor:pointer;display:inline-block;padding:10px 26px;border-radius:30px;background:#fff;color:var(--tx);font-size:16px;margin-right:8px;box-shadow:inset 0 0 0 2px #cfcfcf}
 .dlg a[hidden]{display:none}
-.dlg a:hover,.dlg button:hover{filter:brightness(1.15)}
-.dlg :focus-visible{outline-color:#222}
-@media (max-width:640px){.user small{display:none}.col{flex-basis:150px}.col.f{flex-basis:80vw}}
+.dlg a:hover,.dlg button:hover,.dlg a:focus-visible,.dlg button:focus-visible{box-shadow:inset 0 0 0 3px var(--cy)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="top"><nav id="tabs" role="tablist" aria-label="Розділи"></nav><button class="user" id="me" aria-label="Профіль Masik"><span class="who"><b>Masik</b><small><i>G</i><span id="gs">2026</span></small></span><div class="av" aria-hidden="true">M</div></button></div>
-<main class="stage" id="stage"></main>
-<div class="ach" id="ach" role="status"><i>G</i><div><small>Досягнення розблоковано</small><b id="at"></b></div></div>
+<header class="bar"><button class="me" id="me" aria-label="Профіль Masik">M</button><div class="st"><button class="sd" id="sd" aria-label="Звук"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button><span id="clk">--:--</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r=".8"/></svg><span class="bat"><i id="bl"></i></span><span id="bp">100%</span></div></header>
+<main id="mn"><section class="shelf"><div class="track" id="trk"></div></section><div class="cap"><b id="ct"></b><span id="cd"></span></div><nav class="dock" id="dock" aria-label="Швидкі кнопки"></nav></main>
 <div class="ov" id="ov"><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt"><h2 id="dt"></h2><div class="bd" id="db"></div><p id="dp"></p><a id="dl" target="_blank" rel="noopener" hidden>Відкрити</a><button id="dx">Закрити</button></div></div>
 <script>
 const I={code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',gauge:'<path d="M4 17a9 9 0 1 1 16 0"/><path d="M12 14l4-5"/>',lock:'<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/>',spark:'<path d="M12 3l2.2 6.3L21 12l-6.8 2.7L12 21l-2.2-6.3L3 12l6.8-2.7z"/>',file:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',game:'<rect x="3" y="8" width="18" height="10" rx="4"/><path d="M8 11v4M6 13h4"/><circle cx="16" cy="12" r=".8"/>',tv:'<rect x="3" y="5" width="18" height="12" rx="1"/><path d="M8 21h8"/>',rocket:'<path d="M12 3c4 2 6 6 5 11l-3 3h-4l-3-3c-1-5 1-9 5-11z"/><circle cx="12" cy="10" r="1.6"/><path d="M9 17l-2 4M15 17l2 4"/>',chart:'<path d="M3 20h18M5 16l5-5 4 3 6-8"/>',chess:'<path d="M9 21h6M8 21l1-6h6l1 6M10 15c-1-3 0-5 2-7 2 2 3 4 2 7M12 4v4M10 6h4"/>',up:'<path d="M12 20V6M6 12l6-6 6 6"/>',box:'<rect x="3" y="4" width="18" height="5"/><path d="M5 9v10h14V9M10 13h4"/>',yt:'<rect x="3" y="6" width="18" height="12" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/>',chat:'<path d="M4 5h16v11H9l-5 4z"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>'};
-const L={gh:["GitHub","code","https://github.com/masik52xd","Репозиторії @masik52xd","SOURCE CODE"],yt:["YouTube","yt","https://www.youtube.com/@мвкфр","Офіційний канал mwk","ВІДЕО"],dc:["Discord","chat","https://discord.gg/DNbV8uCynp","Спільнота true. Приєднуйтесь до обговорення проектів.","TRUE. COMMUNITY"],rc:["Random Countries","box","https://masik52xd.github.io/RandomCountry/","Архівний експериментальний проект генерації країн.","АРХІВ"]};
-const T=[
-{n:"home",a:"#2aa6d6",c:[
- [["Вайбкодінг","spark",0,"Гнучке створення коду за допомогою ШІ для розв’язання реальних завдань. Пишу код через різні ШІ, але роблю все те, що могло б мені і іншим людям реально знадобитися в житті.","ШІ ПІДХІД"],
-  ["Без навантаження","gauge",0,"Усі проекти створюються з фокусом на те, щоб споживати мінімум ресурсів заліза. Мінімум процесів та фонової активності для стабільної роботи навіть на застарілих девайсах. Окрім IF ELSE :)","ШВИДКІСТЬ"],
-  ["Open‑Source","lock",0,"Жодної прихованої телеметрії, реклами чи збору персональних даних у коді. Всі мої репозиторії під ліцензією MIT, навіть якщо там це не написано.","MIT LICENSE"]],
- ["Ласкаво просимо на mwkdev.pp.ua!","code",0,"Це сайт Masik’а — вайбкодера, моддера та контент-креатора. Тут ви можете знайти мої програми, авторські утиліти та інші експериментальні розробки.","ОФІЦІЙНИЙ САЙТ // 2026"],
- [["Про сайт","info",0,"Сайт у стилі головного меню Xbox 360. Кожна плитка клікабельна: посилання відкриваються в новій вкладці, інші плитки показують опис.","© 2026 MASIK"]]]},
-{n:"софт",a:"#f0742a",c:[
- [["EzTyper","file","https://github.com/masik52xd/EzTyper/tree/main","Текстовий редактор сценаріїв, у якому фішок значно більше, ніж у notepad.exe, але ресурсів він споживає менше.","ВІДКРИТИ GITHUB"],
-  ["Upgrader","up","http://mwkdev.pp.ua/upgrader/","Апгрейди віртуальні скіни з віртуальним балансом! Додає азарту.","SIMULATOR"]],
- ["SOMAF1X","game","https://masik52xd.github.io/s0maf1x-launcher-site/","Найлегший Minecraft Launcher з унікальним дизайном та нативною підтримкою Ely.by спільноти.","ПЕРЕЙТИ НА САЙТ"],
- [["Усі репозиторії","code","https://github.com/masik52xd?tab=repositories","Повний список моїх проектів і експериментів на GitHub.","REPOSITORIES"],
-  ["Скоро…","spark",0,"Нові утиліти вже в роботі. Заглядай частіше — досягнення самі себе не розблокують ;)","В РОЗРОБЦІ"]]]},
-{n:"web & gaming",a:"#d83b8a",c:[
- [["Broadcast Suite","tv","https://masik52xd.github.io/Broadcast-suite/","Професійна оверлей-платформа для трансляцій кіберспортивних матчів незалежними організаторами.","ESPORTS OVERLAY"],
-  ["MakeIt Hub","rocket","https://masik52xd.github.io/makeithavoc/","Платформа для навчання нових гравців та входу у світ Havoc з інтегрованою чергою матчів.","COMMUNITY HUB"],
-  ["Havoc.gg","chart","https://masik52xd.github.io/Havoc.gg/","Глобальний портал для збору статистики, матчів та публікації новин гри Havoc (в розробці).","В РОЗРОБЦІ"]],
- ["Chess Upgrader","chess","https://masik52xd.github.io/Chess","Шахи з новою фішкою — апгрейд фігур! Працює через P2P, має MIT ліцензію.","P2P GAME"],
- [L.rc]]},
-{n:"контакти",a:"#8b5fd0",c:[
- [L.gh,L.yt],
- ["Напишіть мені","mail","mailto:buzznachile@gmail.com","Код, відео та спільнота — в одному місці. Пишіть на buzznachile@gmail.com","НАПИСАТИ ЛИСТ"],
- [L.dc]]}
+// [назва, іконка, посилання, опис, бейдж, колір1, колір2]
+const P=[
+["mwkdev.pp.ua","code",0,"Це сайт Masik’а — вайбкодера, моддера та контент-креатора. Тут ви можете знайти мої програми, авторські утиліти та інші експериментальні розробки.","ОФІЦІЙНИЙ САЙТ // 2026","#10b8e8","#0a63b5"],
+["EzTyper","file","https://github.com/masik52xd/EzTyper/tree/main","Текстовий редактор сценаріїв, у якому фішок значно більше, ніж у notepad.exe, але ресурсів він споживає менше.","ВІДКРИТИ GITHUB","#ff9a3c","#d8420a"],
+["SOMAF1X","game","https://masik52xd.github.io/s0maf1x-launcher-site/","Найлегший Minecraft Launcher з унікальним дизайном та нативною підтримкою Ely.by спільноти.","ПЕРЕЙТИ НА САЙТ","#4ed04a","#13801b"],
+["Upgrader","up","http://mwkdev.pp.ua/upgrader/","Апгрейди віртуальні скіни з віртуальним балансом! Додає азарту.","SIMULATOR","#a56bff","#5a22b8"],
+["Broadcast Suite","tv","https://masik52xd.github.io/Broadcast-suite/","Професійна оверлей-платформа для трансляцій кіберспортивних матчів незалежними організаторами.","ESPORTS OVERLAY","#ff5a5a","#b3122b"],
+["MakeIt Hub","rocket","https://masik52xd.github.io/makeithavoc/","Платформа для навчання нових гравців та входу у світ Havoc з інтегрованою чергою матчів.","COMMUNITY HUB","#5aa2ff","#1c3fb0"],
+["Havoc.gg","chart","https://masik52xd.github.io/Havoc.gg/","Глобальний портал для збору статистики, матчів та публікації новин гри Havoc (в розробці).","В РОЗРОБЦІ","#555a66","#1c1f26"],
+["Chess Upgrader","chess","https://masik52xd.github.io/Chess","Шахи з новою фішкою — апгрейд фігур! Працює через P2P, має MIT ліцензію.","P2P GAME","#ff6fb1","#9a1f66"],
+["Random Countries","box","https://masik52xd.github.io/RandomCountry/","Архівний експериментальний проект генерації країн.","АРХІВ","#9aa3ad","#59616b"],
+["Скоро…","spark",0,"Нові утиліти вже в роботі. Заглядай частіше ;)","В РОЗРОБЦІ","#ffd84a","#e08a00"]
 ];
-const tabs=document.getElementById("tabs"),stage=document.getElementById("stage"),ov=document.getElementById("ov");
-let cur=0,prev=0,data=[],last=0,gs=2026,opens=0;const got=new Set(),seen=new Set(),A=document.getElementById("ach");
+const B=[
+["Про сайт","info",0,"Сайт у стилі головного меню Nintendo Switch. Натисни вибрану плитку, щоб відкрити проект, а колесо миші, стрілки чи свайп гортають список.","© 2026 MASIK"],
+["Вайбкодінг","spark",0,"Гнучке створення коду за допомогою ШІ для розв’язання реальних завдань. Пишу код через різні ШІ, але роблю все те, що могло б мені і іншим людям реально знадобитися в житті.","ШІ ПІДХІД"],
+["Без навантаження","gauge",0,"Усі проекти створюються з фокусом на те, щоб споживати мінімум ресурсів заліза. Мінімум процесів та фонової активності для стабільної роботи навіть на застарілих девайсах. Окрім IF ELSE :)","ШВИДКІСТЬ"],
+["Open‑Source","lock",0,"Жодної прихованої телеметрії, реклами чи збору персональних даних у коді. Всі мої репозиторії під ліцензією MIT, навіть якщо там це не написано.","MIT LICENSE"],
+["GitHub","code","https://github.com/masik52xd","Репозиторії @masik52xd","SOURCE CODE"],
+["YouTube","yt","https://www.youtube.com/@мвкфр","Офіційний канал mwk","ВІДЕО"],
+["Discord","chat","https://discord.gg/DNbV8uCynp","Спільнота true. Приєднуйтесь до обговорення проектів.","TRUE. COMMUNITY"],
+["Пошта","mail","mailto:buzznachile@gmail.com","Код, відео та спільнота — в одному місці. Пишіть на buzznachile@gmail.com","НАПИСАТИ ЛИСТ"]
+];
+const $=id=>document.getElementById(id),trk=$("trk"),dock=$("dock"),ov=$("ov"),mn=$("mn");
 const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ic=k=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg>`;
-function tile(x,feat){const id=data.push(x)-1,link=x[2];
-const inner=feat?`${ic(x[1])}<span class="bar"><b>${e(x[0])}</b><span class="desc">${e(x[3])}</span><span class="sub">${e(x[4])}</span></span>`:`${ic(x[1])}<span>${e(x[0])}</span><span class="sub">${e(x[4])}</span>`;
-const cls="tile"+(feat?" feat":"");
-return link?`<a class="${cls}" href="${e(link)}" ${link.startsWith("http")?'target="_blank" rel="noopener"':""} title="${e(x[3])}">${inner}</a>`:`<button class="${cls}" data-i="${id}" title="${e(x[3])}">${inner}</button>`}
-function draw(){
-tabs.innerHTML=T.map((x,k)=>`<button role="tab" aria-selected="${k===cur}" data-k="${k}">${e(x.n)}</button>`).join("");
-const c=T[cur].c;data=[];
-stage.className="stage in"+(cur<prev?" back":"");stage.style.setProperty("--ac",T[cur].a);
-stage.innerHTML=`<div class="row"><div class="col">${c[0].map(x=>tile(x)).join("")}</div><div class="col f">${tile(c[1],1)}</div>${c[2].length?`<div class="col">${c[2].map(x=>tile(x)).join("")}</div>`:""}</div>`;
-stage.scrollLeft=0;
-[...stage.querySelectorAll(".tile")].forEach((t,i)=>t.style.animationDelay=i*45+"ms");
-}
-function go(d){const n=cur+d;if(n<0||n>=T.length)return;prev=cur;cur=n;draw()}
-function open(x){const dl=document.getElementById("dl");dl.hidden=!x[2];if(x[2])dl.href=x[2];document.getElementById("dt").textContent=x[0];document.getElementById("db").textContent=x[4];document.getElementById("dp").textContent=x[3];ov.classList.add("on");document.getElementById("dx").focus()}
-function close(){ov.classList.remove("on")}
-stage.addEventListener("click",ev=>{const b=ev.target.closest("button.tile");if(b)open(data[+b.dataset.i])});
-document.addEventListener("wheel",ev=>{
-if(ov.classList.contains("on"))return;
-const d=Math.abs(ev.deltaY)>Math.abs(ev.deltaX)?ev.deltaY:ev.deltaX;
-if(Math.abs(d)<4)return;
-const max=stage.scrollWidth-stage.clientWidth;
-if(max>40&&((d>0&&stage.scrollLeft<max-2)||(d<0&&stage.scrollLeft>2))){stage.scrollLeft+=d;ev.preventDefault();return}
-ev.preventDefault();
-const t=Date.now();if(t-last<450)return;last=t;go(d>0?1:-1)},{passive:false});
-tabs.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;prev=cur;cur=+b.dataset.k;draw()});
-document.getElementById("dx").onclick=close;
-document.getElementById("me").onclick=()=>open(["Masik","G 2026 · ВАЙБКОДЕР · МОДДЕР · КОНТЕНТ-КРЕАТОР","https://github.com/masik52xd","Привіт! Я Masik — роблю програми, утиліти та експерименти за допомогою ШІ. Gamerscore 2026 — бо саме цього року зроблено цей сайт :)"]);
+const ic=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg>`;
+let sel=0,bs=0,zone="t",sOn=true,ac;
+function tone(f,d,ty,v,dl){const t=ac.currentTime+(dl||0),o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.02)}
+function snd(k){if(!sOn)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume();
+if(k==="tick")tone(1500,.05,"triangle",.07);
+else if(k==="ok"){tone(700,.09,"sine",.12);tone(1050,.14,"sine",.1,.07)}
+else if(k==="back")tone(480,.12,"sine",.12)}catch(_){}}
+trk.innerHTML=P.map((x,i)=>`<button class="tile" data-i="${i}" style="--a:${x[5]};--b:${x[6]}" aria-label="${e(x[0])}"><span class="art">${ic(x[1])}<span>${e(x[0])}</span></span><span class="nm">${e(x[0])}</span></button>`).join("");
+dock.innerHTML=B.map((x,i)=>`<button class="dk" data-i="${i}" aria-label="${e(x[0])}">${ic(x[1])}<span class="lb">${e(x[0])}</span></button>`).join("");
+const tiles=[...trk.children],dks=[...dock.children];
+function render(){
+mn.classList.toggle("zb",zone==="b");
+tiles.forEach((t,i)=>t.classList.toggle("sel",i===sel));
+dks.forEach((d,i)=>d.classList.toggle("on",zone==="b"&&i===bs));
+const t=tiles[sel];
+trk.style.transform=`translateX(${trk.parentElement.clientWidth/2-(t.offsetLeft+t.offsetWidth/2)}px)`;
+$("ct").textContent=P[sel][4];$("cd").textContent=P[sel][3]}
+function openDlg(x){$("dt").textContent=x[0];$("db").textContent=x[4];$("dp").textContent=x[3];const l=$("dl");l.hidden=!x[2];if(x[2])l.href=x[2];ov.classList.add("on");$("dx").focus()}
+function close(){if(ov.classList.contains("on"))snd("back");ov.classList.remove("on")}
+function act(x){snd("ok");if(!x[2])return openDlg(x);if(x[2].startsWith("http"))window.open(x[2],"_blank","noopener");else location.href=x[2]}
+function move(d){const o=zone==="t"?sel:bs;if(zone==="t")sel=Math.max(0,Math.min(P.length-1,sel+d));else bs=Math.max(0,Math.min(B.length-1,bs+d));if((zone==="t"?sel:bs)!==o)snd("tick");render()}
+trk.addEventListener("click",ev=>{const t=ev.target.closest(".tile");if(!t)return;const i=+t.dataset.i;if(i===sel&&zone==="t")act(P[i]);else{sel=i;zone="t";snd("tick");render()}});
+dock.addEventListener("click",ev=>{const d=ev.target.closest(".dk");if(d)act(B[+d.dataset.i])});
+dock.addEventListener("mouseover",ev=>{const d=ev.target.closest(".dk");if(d&&(zone!=="b"||bs!==+d.dataset.i)){bs=+d.dataset.i;zone="b";snd("tick");render()}});
+dock.addEventListener("mouseleave",()=>{zone="t";render()});
+$("me").onclick=()=>openDlg(["Masik","G 2026 · ВАЙБКОДЕР · МОДДЕР · КОНТЕНТ-КРЕАТОР","https://github.com/masik52xd","Привіт! Я Masik — роблю програми, утиліти та експерименти за допомогою ШІ."]);
+$("dx").onclick=close;
+function tgl(){sOn=!sOn;$("sd").classList.toggle("off",!sOn);snd("ok")}
+$("sd").onclick=tgl;
 ov.addEventListener("click",ev=>{if(ev.target===ov)close()});
+const KON=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];let kp=0;
 document.addEventListener("keydown",ev=>{
 if(ev.key==="Escape"){close();return}
 if(ov.classList.contains("on"))return;
-if(ev.key==="ArrowRight")go(1);else if(ev.key==="ArrowLeft")go(-1)});
-function ding(){try{const c=new(window.AudioContext||window.webkitAudioContext)();[880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+i*.13;o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.5);o.start(t);o.stop(t+.55)})}catch(_){}}
-let at;function ach(id,t,g){if(got.has(id))return;got.add(id);gs+=g;document.getElementById("gs").textContent=gs;document.getElementById("at").textContent=t+" — "+g+"G";A.classList.add("on");ding();clearTimeout(at);at=setTimeout(()=>A.classList.remove("on"),4200)}
-const KON=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];let kp=0,buf="";
-document.addEventListener("keydown",ev=>{
 const k=ev.key.length===1?ev.key.toLowerCase():ev.key;
 kp=k===KON[kp]?kp+1:(k===KON[0]?1:0);
-if(kp===KON.length){kp=0;ach("konami","Konami Code",30);document.body.classList.add("rb");setTimeout(()=>document.body.classList.remove("rb"),4300)}
-if(ev.key.length!==1||ov.classList.contains("on"))return;
-buf=(buf+k).slice(-6);
-if(buf.endsWith("xbox"))ach("xbox","Ring of Light",15);
-if(buf.endsWith("masik"))ach("me","Власною персоною",10);
-if(buf.endsWith("rrod")){ach("rrod","Три червоні вогні",25);open(["Помилка E74","XBOX 360 · ТРИ ЧЕРВОНІ ВОГНІ","","Консоль потребує обслуговування… жартую, з сайтом усе гаразд. Спробуй дунути на картридж."])}});
-document.getElementById("me").addEventListener("click",()=>{if(++opens>=3)ach("fan","Постійний клієнт",10)});
-tabs.addEventListener("click",()=>{seen.add(cur);if(seen.size===T.length)ach("tour","Мандрівник",20)});
-document.addEventListener("keydown",()=>seen.add(cur));
+if(kp===KON.length){kp=0;document.body.classList.toggle("rb")}
+if(k==="ArrowRight")move(1);else if(k==="ArrowLeft")move(-1);
+else if(k==="ArrowDown"){if(zone!=="b")snd("tick");zone="b";render()}else if(k==="ArrowUp"){if(zone!=="t")snd("tick");zone="t";render()}else if(k==="m")tgl()
+else if(k==="Enter"||k===" "){ev.preventDefault();act(zone==="t"?P[sel]:B[bs])}});
+let wt=0;document.addEventListener("wheel",ev=>{if(ov.classList.contains("on"))return;const d=Math.abs(ev.deltaY)>Math.abs(ev.deltaX)?ev.deltaY:ev.deltaX,t=Date.now();if(Math.abs(d)<4||t-wt<130)return;wt=t;move(d>0?1:-1)},{passive:true});
+let tx=0;document.addEventListener("touchstart",ev=>{tx=ev.touches[0].clientX},{passive:true});
+document.addEventListener("touchend",ev=>{const d=ev.changedTouches[0].clientX-tx;if(Math.abs(d)>50&&!ov.classList.contains("on"))move(d<0?1:-1)},{passive:true});
+addEventListener("resize",render);
+function clock(){const d=new Date();$("clk").textContent=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+clock();setInterval(clock,10000);
+if(navigator.getBattery)navigator.getBattery().then(b=>{const u=()=>{const p=Math.round(b.level*100);$("bl").style.width=p+"%";$("bp").textContent=p+"%"};u();b.addEventListener("levelchange",u)}).catch(()=>{});
 document.addEventListener("visibilitychange",()=>{document.title=document.hidden?"👀 Ти де?":"mwkdev.pp.ua"});
-setTimeout(()=>ach("hi","Ласкаво просимо",5),1500);
-setTimeout(()=>ach("stay","Не поспішаю",10),45000);
-console.log("%cШукаєш пасхалки? 🎮 Спробуй Konami code, або набери: xbox, masik, rrod","color:#14a514;font-size:14px");
-draw();
+console.log("%cШукаєш пасхалки? 🎮 Спробуй Konami code","color:#00a8c8;font-size:14px");
+render();
 </script>
 </body>
 </html>
